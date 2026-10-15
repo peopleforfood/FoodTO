@@ -59,6 +59,22 @@ h2{margin:2px 0;font-size:21px}.cat{color:#666;font-size:14px}
 .rh{display:flex;justify-content:space-between;align-items:center;margin:18px 0 4px;font-size:17px}.wr{border:0;background:var(--gl);color:var(--g);font-weight:600;border-radius:18px;height:36px;padding:0 14px;font-size:14px}
 .rform{background:#f7f7f5;border-radius:12px;padding:12px;margin:8px 0}.stp{display:flex;gap:4px}.stp button{border:0;background:none;font-size:30px;color:#f5a623;width:44px;height:44px;padding:0}.rform textarea{width:100%;border:1px solid #ddd;border-radius:10px;padding:10px;font:inherit;font-size:16px;margin:6px 0}.send{width:100%;height:46px;border:0;border-radius:12px;background:var(--g);color:#fff;font-weight:600}
 .mb .st{font-style:normal;font-size:11px;margin-left:-1px}
+
+.page{position:fixed;left:0;right:0;top:0;bottom:var(--nav);background:#fff;z-index:6;overflow-y:auto;overscroll-behavior:contain;display:none;-webkit-overflow-scrolling:touch}.page.on{display:block}#plist{z-index:6;}
+.ph1{padding:calc(14px + env(safe-area-inset-top)) 16px 4px}.ph1 h1{margin:0;font-size:28px}.ph1 small{color:#777}
+section{margin:14px 0 6px}.ch{display:flex;align-items:baseline;gap:10px;margin:0 16px 10px;font-size:19px}.ch span{font-size:14px;color:var(--g);font-weight:600;cursor:pointer}
+.car{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;padding:0 16px 6px;scrollbar-width:none}.car::-webkit-scrollbar{display:none}.car.all{flex-direction:column;overflow:visible}.car.all .dt{width:100%}
+.dt{position:relative;flex:none;width:78vw;max-width:340px;aspect-ratio:16/10;border-radius:12px;overflow:hidden;scroll-snap-align:start;background:#f2f2f0;cursor:pointer;contain:content}
+.col{position:absolute;inset:0;display:grid;gap:2px;background:#fff}.col.c1{grid-template-columns:1fr}.col.c2{grid-template-columns:1fr 1fr}.col.c3{grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr}.col.c3>:first-child{grid-row:span 2}.col.c4{grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr}
+.col img,.col .ph{width:100%;height:100%;object-fit:contain;background:#f2f2f0;padding:8%;min-height:0}.col .ph span{width:34px;height:34px;font-size:15px}
+.dto{position:absolute;left:0;right:0;bottom:0;padding:28px 12px 10px;background:linear-gradient(transparent,#000b);color:#fff}.dto b{display:block;font-size:17px}.dto small{font-size:12px;opacity:.9}
+.tag{position:absolute;top:8px;right:8px;background:#fff;color:#111;font-size:10px;font-weight:800;letter-spacing:.5px;padding:3px 6px;border-radius:3px}.tag.sale{background:#d93025;color:#fff}.tag.sm{position:static;font-size:9px;vertical-align:middle}
+.live{position:absolute;top:8px;left:8px;background:#e50914;color:#fff;font-size:11px;font-weight:800;letter-spacing:.6px;padding:3px 7px;border-radius:4px;display:flex;align-items:center;gap:5px}.live i{width:7px;height:7px;border-radius:50%;background:#fff;animation:pl 1.2s infinite}
+@keyframes pl{50%{opacity:.25}}
+.lh{position:relative;height:230px;background:#f2f2f0}.lh .col{position:absolute;inset:0}.lht{position:absolute;left:0;right:0;bottom:0;padding:40px 16px 12px;background:linear-gradient(transparent,#000c);color:#fff}.lht h1{margin:0;font-size:24px}.lht small{display:block;font-size:13px;opacity:.9;margin-top:2px}.lht .live,.lht .tag{position:static;display:inline-flex;margin-bottom:6px}
+.back{position:absolute;z-index:2;top:calc(10px + env(safe-area-inset-top));left:10px;width:44px;height:44px;border-radius:22px;border:0;background:#fffe;font-size:28px;line-height:40px;box-shadow:0 1px 4px #0003}
+.lr{display:flex;gap:12px;align-items:center;padding:10px 16px;border-bottom:1px solid #f0f0f0;cursor:pointer}.lri{width:64px;height:64px;border-radius:8px;flex:none;object-fit:contain;background:#f2f2f0;padding:4px}.lri.ph span{width:32px;height:32px;font-size:14px}
+.lrt{flex:1;min-width:0;font-size:14px}.lrt small{display:block;color:#888;font-size:12px}.lrt .ln{color:#555;font-style:italic}.lrp{font-size:13px;text-align:right;white-space:nowrap}.lrp s{color:#999;display:block;font-size:11px}.sale{color:#d93025}
 </style></head><body>
 <div id="map"></div>
 <div id="top"><div id="search">🔍<input id="q" placeholder="Search FoodTO businesses" autocomplete="off" enterkeyhint="search"></div><div id="results"></div>
@@ -68,7 +84,8 @@ h2{margin:2px 0;font-size:21px}.cat{color:#666;font-size:14px}
 <div class="sheet" id="card"><div class="grab"><i></i></div><div class="sb" id="cb"></div></div>
 <div class="sheet" id="prod"><div class="grab"><i></i></div><div class="sb" id="pb"></div></div>
 <div class="sheet" id="filt"><div class="grab"><i></i></div><div class="opts" id="fb"></div></div>
-<nav id="nav"><button class="on"><b>🗺️</b>Map</button><button data-s><b>📷</b>Scan</button><button data-s><b>✨</b>Discover</button><button data-s><b>💬</b>Chat</button></nav>
+<div id="disc" class="page"></div><div id="plist" class="page"></div>
+<nav id="nav"><button class="on" data-nav="map"><b>🗺️</b>Map</button><button data-s><b>📷</b>Scan</button><button data-nav="disc"><b>✨</b>Discover</button><button data-s><b>💬</b>Chat</button></nav>
 <div id="toast"></div>
 <script src="maplibre-gl.js"></script>
 <script>
@@ -118,7 +135,7 @@ const revHTML=L=>L.length?L.map(r=>`<div class="rv"><div class="av" style="backg
 const col=n=>`hsl(${[...n].reduce((a,c)=>a+c.charCodeAt(0),0)*47%360} 55% 42%)`,fmtD=d=>new Date(d+'T12:00').toLocaleDateString('en-CA',{month:'short',day:'numeric',year:'numeric'});
 $('#cb').addEventListener('click',e=>{const t=e.target.closest('[data-t]');if(t&&sel)return card(sel,t.dataset.t);const p=e.target.closest('.tile[data-p]');if(p&&sel)scorecard(sel,sel.products[p.dataset.p])});
 function scorecard(b,p){const [t,tag]=p.name.split(' - ');const tags=(tag||'').split(/,\s*|\s+and\s+/).map(x=>x.trim()).filter(Boolean);const R=(k,v)=>v?`<div class="row"><b>${k}</b><span>${v}</span></div>`:'';
- $('#pb').innerHTML=`<div class="hero">${pimg(p,'hi')}</div><div class="scp"><h2 class="pn">${esc(t)}</h2><div class="cat">${esc([p.brand,p.size,p.price].filter(Boolean).join(' · '))}</div>
+ $('#pb').innerHTML=`<div class="hero">${pimg(p,'hi')}</div><div class="scp"><h2 class="pn">${esc(t)}</h2><div class="cat">${esc([p.brand,p.size].filter(Boolean).join(' · '))}${p.price?' · '+priceHTML(p):''}${p.on_sale?' <span class="tag sale sm">ON SALE</span>':''}</div>
  <div class="scores">${['fs','cs','hs'].map(k=>`<div class="sc"><div class="ring" style="--v:${k=='cs'?(p.cs??0)*20:(p[k]??0)}">${IC[k]}</div>${k=='cs'?`<b>${p.cs!=null?`<i class="st">★</i>${p.cs.toFixed(1)}`:'–'}</b><small>Community<br>${p.cn} review${p.cn==1?'':'s'}</small>`:`<b>${p[k]??'–'}</b><small>${LB[k]}<br>/100</small>`}</div>`).join('')}</div>
  ${tags.length?`<div class="pills">${tags.map(x=>`<span>${esc(x)}</span>`).join('')}</div>`:''}
  ${ME?`<div class="note">“Your health” is for ${esc(ME.name)}: ${esc(ME.health_profile)}.</div>`:''}<div class="note">Demo data: FoodTO and Your health scores are random; Community is the average of (dummy) FoodTO user reviews.</div>
@@ -170,6 +187,27 @@ function syncPM(){const n=perZoom(map.getZoom());pms.forEach(o=>{const show=view
 let zr=0;map.on('zoom',()=>{if(view=='p'&&!zr)zr=requestAnimationFrame(()=>{zr=0;syncPM()})});
 $('#vt').onclick=e=>{const t=e.target.closest('[data-v]');if(!t||t.dataset.v==view)return;view=t.dataset.v;$('#vt').querySelectorAll('button').forEach(x=>x.classList.toggle('on',x==t));document.querySelectorAll('.sheet.open').forEach(closeS);
  if(!pms.length)buildPM();apply();if(view=='p'&&map.getZoom()<15)map.easeTo({zoom:15,duration:300})};
-fetch('data.json').then(r=>r.json()).then(D=>{const d=D.businesses;ME=D.me;biz=d;try{const L=JSON.parse(localStorage.ftoPR||'{}');d.forEach(b=>b.products.forEach(p=>{if(L[p.product_id]){p.reviews=[...L[p.product_id],...p.reviews];p.cn=p.reviews.length;p.cs=Math.round(p.reviews.reduce((a,x)=>a+x.stars,0)/p.cn*10)/10}}))}catch(_){}d.forEach(b=>{const el=document.createElement('div');el.className='pin';el.innerHTML='<span></span>';el.dataset.id=b.id;
- el.addEventListener('click',e=>{e.stopPropagation();open(b)});pins[b.id]=el;new maplibregl.Marker({element:el,anchor:'bottom'}).setLngLat([b.lng,b.lat]).addTo(map)});const bb=new maplibregl.LngLatBounds();d.forEach(b=>bb.extend([b.lng,b.lat]));map.fitBounds(bb,{padding:{top:150,bottom:70,left:40,right:40},duration:0});apply()});
+// ---------- Discover ----------
+const PX={};let LISTS=[],MK={};
+const priceHTML=p=>p.price?(p.on_sale&&p.regular_price&&p.regular_price!=p.price?`<b class="sale">${esc(p.price)}</b> <s>${esc(p.regular_price)}</s>`:esc(p.price)):'';
+function collage(ids,n=4){const im=ids.map(i=>PX[i]).filter(Boolean).filter(x=>x[1].img).slice(0,n);const ph=ids.slice(0,n).map(i=>PX[i]).filter(Boolean);
+ const src=im.length>=2?im:ph;return `<div class="col c${Math.min(src.length,4)}">${src.slice(0,4).map(([b,p])=>p.img?`<img loading="lazy" decoding="async" src="${p.img}" alt="">`:`<div class="ph"><span>${esc((p.brand||p.name)[0])}</span></div>`).join('')}</div>`}
+const TAG={engine:'<span class="tag">FOR YOU</span>',value:'<span class="tag sale">ON SALE</span>',market:'<span class="live"><i></i>LIVE</span>',foodie:'<span class="tag">LIST</span>'};
+function tileHTML(l){return `<div class="dt" data-l="${l.id}">${collage(l.items)}${TAG[l.type]||''}<div class="dto"><b>${esc(l.title)}</b><small>${esc(l.subtitle)} · ${l.items.length} items</small></div></div>`}
+function renderDisc(){const C={};LISTS.forEach(l=>(C[l.carousel]??=[]).push(l));
+ $('#disc').innerHTML=`<div class="ph1"><h1>Discover</h1><small>Toronto's independent food scene</small></div>`+Object.entries(C).map(([c,ls])=>`<section><h2 class="ch">${esc(c)} <span>See more ›</span></h2><div class="car">${ls.map(tileHTML).join('')}</div></section>`).join('')+`<div class="note" style="margin:8px 16px 24px">Demo: FoodTO picks, value finds and foodie lists are DUMMY; markets are shown as live for the prototype.</div>`}
+function openList(id){const l=LISTS.find(x=>x.id==id);if(!l)return;const m=MK[l.market_id];
+ let rows='';if(l.type=='market'){const G={};l.items.forEach(i=>{const[b]=PX[i];(G[b.name]??=[]).push(i)});rows=Object.entries(G).map(([v,ids])=>`<div class="cg" style="padding:14px 16px 2px">${esc(v)} <small>${ids.length}</small></div>`+ids.map(i=>lrow(i,l)).join('')).join('')}else rows=l.items.map(i=>lrow(i,l)).join('');
+ $('#plist').innerHTML=`<div class="lh"><button class="back" id="lback">‹</button>${collage(l.items)}<div class="lht">${TAG[l.type]||''}<h1>${esc(l.title)}</h1><small>${esc(l.subtitle)}${l.curator?' · by '+esc(l.curator):''} · ${l.items.length} items</small>${m?`<small>📍 ${esc(m.address)}<br>🕒 ${esc(m.schedule)}</small>`:''}</div></div>
+ ${l.dummy?`<div class="note" style="margin:10px 16px">DUMMY list for the prototype${l.type=='foodie'?`: not ${esc(l.curator)}'s real picks`:''}.</div>`:''}<div class="lrows">${rows}</div>`;
+ $('#plist').classList.add('on');$('#plist').scrollTop=0}
+function lrow(i,l){const x=PX[i];if(!x)return'';const[b,p]=x,t=p.name.split(' - ')[0],n=l.notes&&l.notes[i];
+ return `<div class="lr" data-pid="${i}">${pimg(p,'lri')}<div class="lrt"><div>${esc(t)}</div><small>${esc(b.name)}${p.size?' · '+esc(p.size):''}</small>${n?`<small class="ln">“${esc(n)}”</small>`:''}${mini(p)}</div><div class="lrp">${priceHTML(p)}</div></div>`}
+$('#disc').addEventListener('click',e=>{const t=e.target.closest('[data-l]');if(t)openList(t.dataset.l);const sm=e.target.closest('.ch span');if(sm){const c=sm.closest('section').querySelector('.car');c.classList.toggle('all')}});
+$('#plist').addEventListener('click',e=>{if(e.target.id=='lback')return $('#plist').classList.remove('on');const r=e.target.closest('[data-pid]');if(r){const[b,p]=PX[r.dataset.pid];scorecard(b,p)}});
+function nav(to){document.querySelectorAll('#nav [data-nav]').forEach(b=>b.classList.toggle('on',b.dataset.nav==to));document.querySelectorAll('.sheet.open').forEach(closeS);
+ $('#disc').classList.toggle('on',to=='disc');if(to!='disc')$('#plist').classList.remove('on');if(to=='disc'&&!$('#disc').innerHTML)renderDisc()}
+document.querySelectorAll('#nav [data-nav]').forEach(b=>b.onclick=()=>nav(b.dataset.nav));
+fetch('data.json').then(r=>r.json()).then(D=>{const d=D.businesses;ME=D.me;biz=d;LISTS=D.lists||[];(D.markets||[]).forEach(m=>MK[m.market_id]=m);d.forEach(b=>b.products.forEach(p=>PX[p.product_id]=[b,p]));try{const L=JSON.parse(localStorage.ftoPR||'{}');d.forEach(b=>b.products.forEach(p=>{if(L[p.product_id]){p.reviews=[...L[p.product_id],...p.reviews];p.cn=p.reviews.length;p.cs=Math.round(p.reviews.reduce((a,x)=>a+x.stars,0)/p.cn*10)/10}}))}catch(_){}d.forEach(b=>{const el=document.createElement('div');el.className='pin';el.innerHTML='<span></span>';el.dataset.id=b.id;
+ el.addEventListener('click',e=>{e.stopPropagation();open(b)});pins[b.id]=el;new maplibregl.Marker({element:el,anchor:'bottom'}).setLngLat([b.lng,b.lat]).addTo(map)});const bb=new maplibregl.LngLatBounds();d.filter(b=>b.type!='market_vendor').forEach(b=>bb.extend([b.lng,b.lat]));map.fitBounds(bb,{padding:{top:150,bottom:70,left:40,right:40},duration:0});apply()});
 </script></body></html>
