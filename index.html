@@ -52,11 +52,18 @@ h2{margin:2px 0;font-size:21px}.cat{color:#666;font-size:14px}
 .scores{display:flex;justify-content:space-around;margin:16px 0 10px}.sc{display:flex;flex-direction:column;align-items:center;width:30%}.sc b{font-size:20px;margin-top:6px}.sc small{font-size:12px;color:#666;text-align:center}
 .ring{width:64px;height:64px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:conic-gradient(var(--g) calc(var(--v)*1%),#e6e6e6 0)}.ring .bi{width:52px;height:52px;box-shadow:0 0 0 3px #fff}
 .pills{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 12px}.pills span{background:#f0f0ee;border-radius:6px;padding:6px 10px;font-size:12px}
+#vt{position:fixed;left:12px;bottom:calc(var(--nav) + 18px);z-index:4;display:flex;background:#fff;border-radius:22px;box-shadow:0 2px 8px #0003;padding:3px}#vt button{border:0;background:none;height:40px;padding:0 12px;border-radius:19px;font-size:13px;font-weight:600;color:#555}#vt .on{background:var(--g);color:#fff}
+#count{left:auto;right:76px;transform:none;bottom:calc(var(--nav) + 76px)}
+.pm{width:52px;height:52px;cursor:pointer;transition:opacity .15s}.pm .pw{width:52px;height:52px;border-radius:12px;background:#fff;box-shadow:0 2px 6px #0005;border:2px solid #fff;overflow:hidden;display:flex}.pm img,.pm .pp{width:100%;height:100%;object-fit:contain;background:#f2f2f0}.pm .pp{display:flex;align-items:center;justify-content:center;font-weight:700;color:#888}
+.pm .ps{position:absolute;left:50%;bottom:-9px;transform:translateX(-50%);background:#fff;border-radius:10px;padding:1px 6px 1px 2px;font-size:12px;font-weight:700;display:flex;align-items:center;gap:3px;box-shadow:0 1px 3px #0004;white-space:nowrap}.pm .ps .bi{width:16px;height:16px}.pm.top .pw{border-color:var(--g)}
+.rh{display:flex;justify-content:space-between;align-items:center;margin:18px 0 4px;font-size:17px}.wr{border:0;background:var(--gl);color:var(--g);font-weight:600;border-radius:18px;height:36px;padding:0 14px;font-size:14px}
+.rform{background:#f7f7f5;border-radius:12px;padding:12px;margin:8px 0}.stp{display:flex;gap:4px}.stp button{border:0;background:none;font-size:30px;color:#f5a623;width:44px;height:44px;padding:0}.rform textarea{width:100%;border:1px solid #ddd;border-radius:10px;padding:10px;font:inherit;font-size:16px;margin:6px 0}.send{width:100%;height:46px;border:0;border-radius:12px;background:var(--g);color:#fff;font-weight:600}
+.mb .st{font-style:normal;font-size:11px;margin-left:-1px}
 </style></head><body>
 <div id="map"></div>
 <div id="top"><div id="search">🔍<input id="q" placeholder="Search FoodTO businesses" autocomplete="off" enterkeyhint="search"></div><div id="results"></div>
 <div id="chips"><button class="chip" data-f="score"><span class="fto"></span>FoodTO score</button><button class="chip" data-f="price">Price</button><button class="chip" data-f="dist">Distance</button><button class="chip" id="clear" style="display:none">✕ Clear</button></div></div>
-<div id="count"></div>
+<div id="count"></div><div id="vt"><button class="on" data-v="b">🏪 Businesses</button><button data-v="p">🥫 Products</button></div>
 <button class="fab" id="locate" aria-label="Locate me">◎</button>
 <div class="sheet" id="card"><div class="grab"><i></i></div><div class="sb" id="cb"></div></div>
 <div class="sheet" id="prod"><div class="grab"><i></i></div><div class="sb" id="pb"></div></div>
@@ -67,7 +74,7 @@ h2{margin:2px 0;font-size:21px}.cat{color:#666;font-size:14px}
 <script>
 const $=s=>document.querySelector(s),esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 let ME=null,biz=[],sel=null,me=null,meMk=null;const F={score:null,price:null,dist:null},pins={};
-const map=new maplibregl.Map({container:'map',style:'https://tiles.openfreemap.org/styles/liberty',center:[-79.4145,43.6625],zoom:14.2,attributionControl:{compact:true},dragRotate:false,pitchWithRotate:false,fadeDuration:0});
+const map=window.map=new maplibregl.Map({container:'map',style:'https://tiles.openfreemap.org/styles/liberty',center:[-79.4145,43.6625],zoom:14.2,attributionControl:{compact:true},dragRotate:false,pitchWithRotate:false,fadeDuration:0});
 map.touchZoomRotate.disableRotation();map.on('styleimagemissing',e=>{if(!map.hasImage(e.id))map.addImage(e.id,{width:1,height:1,data:new Uint8Array(4)})});
 function toast(t,ms=1400){const x=$('#toast');x.textContent=t;x.style.display='block';clearTimeout(toast.t);toast.t=setTimeout(()=>x.style.display='none',ms)}
 // sheets: tap handle or swipe down to close
@@ -99,29 +106,40 @@ function card(b,tab='overview'){
  <div class="tabs">${['overview','reviews','catalogue'].map(t=>`<button data-t="${t}" class="${t==tab?'on':''}">${t[0].toUpperCase()+t.slice(1)}${t=='reviews'?` (${b.reviews.length})`:''}</button>`).join('')}</div>${body}`;
 }
 const IC={fs:'<span class="bi fto-i"></span>',cs:'<span class="bi cs-i"><svg viewBox="0 0 24 24"><circle cx="8" cy="8" r="3.2"/><circle cx="16.5" cy="9" r="2.6"/><path d="M2 19c0-3.3 2.7-5.5 6-5.5s6 2.2 6 5.5zM13.5 19c.2-2.4-.6-4-1.6-5 1-.6 2.4-.9 4.6-.9 3 0 5.5 2 5.5 5.9z"/></svg></span>',hs:'<span class="bi hs-i"><svg viewBox="0 0 24 24"><path d="M12 21s-8.5-5.3-8.5-11.2A4.7 4.7 0 0 1 12 7a4.7 4.7 0 0 1 8.5 2.8C20.5 15.7 12 21 12 21z"/><path d="M5 12h3.5l1.5-3 2.5 6 1.5-3H19" fill="none" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/></svg></span>'};
-const LB={fs:'FoodTO score',cs:'Community',hs:'Your health'};
-const mini=p=>`<div class="mb">${['fs','cs','hs'].map(k=>`<span>${IC[k]}${p[k]??'–'}</span>`).join('')}</div>`;
+const LB={fs:'FoodTO score',cs:'Community',hs:'Your health'};const SUB={fs:'out of 100',hs:'out of 100'};
+const csTxt=p=>p.cs!=null?p.cs.toFixed(1):'–';
+const mini=p=>`<div class="mb"><span>${IC.fs}${p.fs??'–'}</span><span>${IC.cs}${csTxt(p)}<i class="st">★</i></span><span>${IC.hs}${p.hs??'–'}</span></div>`;
 const pimg=(p,cls)=>p.img?`<img class="${cls}" loading="lazy" decoding="async" src="${p.img}" alt="">`:`<div class="${cls} ph"><span>${esc((p.brand||p.name)[0])}</span></div>`;
 function pRow(p,i){const t=p.name.split(' - ')[0];return `<div class="tile" data-p="${i}"><div class="tw">${pimg(p,'ti')}</div><div class="tn">${esc(t)}</div><small>${esc([p.brand,p.size].filter(Boolean).join(' · '))}${p.price?' · '+esc(p.price):''}</small>${mini(p)}</div>`}
 function catHTML(b,q='',inp=true){if(!b.products.length)return '<div class="empty">Catalogue not added yet.</div>';const t=q.trim().toLowerCase();const G={};b.products.forEach((p,i)=>{if(t&&!(p.name+' '+p.brand+' '+p.category+' '+p.subcategory).toLowerCase().includes(t))return;(G[p.category||'Other']??=[]).push(pRow(p,i))});
  return (b.products.length>8&&inp?`<input id="cq" class="cq" placeholder="Search ${b.products.length} products" autocomplete="off">`:'')+`<div id="cl">${Object.keys(G).sort().map(k=>`<div class="cg">${esc(k)} <small>${G[k].length}</small></div><div class="grid">${G[k].join('')}</div>`).join('')||'<div class="empty">No matching products</div>'}</div>`}
 $('#cb').addEventListener('input',e=>{if(e.target.id=='cq'&&sel){const h=catHTML(sel,e.target.value,false);$('#cl').outerHTML=h.slice(h.indexOf('<div id="cl">'))}});
+const revHTML=L=>L.length?L.map(r=>`<div class="rv"><div class="av" style="background:${col(r.user.name)}">${esc(r.user.avatar_initials)}</div><div><b>${esc(r.user.name)}</b> <small>${esc(r.user.handle||'')}</small><br><span class="st">${'★'.repeat(r.stars)}${'☆'.repeat(5-r.stars)}</span> <small>${fmtD(r.date)}${r.user.neighbourhood?' · '+esc(r.user.neighbourhood):''}</small>${r.text?`<p>${esc(r.text)}</p>`:''}</div></div>`).join(''):'<div class="empty">No reviews yet. Be the first.</div>';
 const col=n=>`hsl(${[...n].reduce((a,c)=>a+c.charCodeAt(0),0)*47%360} 55% 42%)`,fmtD=d=>new Date(d+'T12:00').toLocaleDateString('en-CA',{month:'short',day:'numeric',year:'numeric'});
 $('#cb').addEventListener('click',e=>{const t=e.target.closest('[data-t]');if(t&&sel)return card(sel,t.dataset.t);const p=e.target.closest('.tile[data-p]');if(p&&sel)scorecard(sel,sel.products[p.dataset.p])});
 function scorecard(b,p){const [t,tag]=p.name.split(' - ');const tags=(tag||'').split(/,\s*|\s+and\s+/).map(x=>x.trim()).filter(Boolean);const R=(k,v)=>v?`<div class="row"><b>${k}</b><span>${v}</span></div>`:'';
  $('#pb').innerHTML=`<div class="hero">${pimg(p,'hi')}</div><div class="scp"><h2 class="pn">${esc(t)}</h2><div class="cat">${esc([p.brand,p.size,p.price].filter(Boolean).join(' · '))}</div>
- <div class="scores">${['fs','cs','hs'].map(k=>`<div class="sc"><div class="ring" style="--v:${p[k]??0}">${IC[k]}</div><b>${p[k]??'–'}</b><small>${LB[k]}</small></div>`).join('')}</div>
+ <div class="scores">${['fs','cs','hs'].map(k=>`<div class="sc"><div class="ring" style="--v:${k=='cs'?(p.cs??0)*20:(p[k]??0)}">${IC[k]}</div>${k=='cs'?`<b>${p.cs!=null?`<i class="st">★</i>${p.cs.toFixed(1)}`:'–'}</b><small>Community<br>${p.cn} review${p.cn==1?'':'s'}</small>`:`<b>${p[k]??'–'}</b><small>${LB[k]}<br>/100</small>`}</div>`).join('')}</div>
  ${tags.length?`<div class="pills">${tags.map(x=>`<span>${esc(x)}</span>`).join('')}</div>`:''}
- ${ME?`<div class="note">“Your health” is for ${esc(ME.name)}: ${esc(ME.health_profile)}.</div>`:''}<div class="note">Demo data: all three scores are random placeholders.</div>
- ${R('🏪',esc(b.name))}${R('🏷️',esc([p.category,p.subcategory].filter(Boolean).join(' › ')))}${R('ℹ️',esc(p.details))}${R('#',esc(p.sku))}${p.product_url?R('🛒',`<a href="${esc(p.product_url)}" target="_blank" rel="noopener">View product</a>`):''}${p.brand_website?R('🌐',`<a href="${esc(p.brand_website)}" target="_blank" rel="noopener">${esc(p.brand||'Brand')} website</a>`):''}</div>`;$('#pb').scrollTop=0;openS($('#prod'))}
+ ${ME?`<div class="note">“Your health” is for ${esc(ME.name)}: ${esc(ME.health_profile)}.</div>`:''}<div class="note">Demo data: FoodTO and Your health scores are random; Community is the average of (dummy) FoodTO user reviews.</div>
+ ${R('🏪',esc(b.name))}${R('🏷️',esc([p.category,p.subcategory].filter(Boolean).join(' › ')))}${R('ℹ️',esc(p.details))}${R('#',esc(p.sku))}${p.product_url?R('🛒',`<a href="${esc(p.product_url)}" target="_blank" rel="noopener">View product</a>`):''}${p.brand_website?R('🌐',`<a href="${esc(p.brand_website)}" target="_blank" rel="noopener">${esc(p.brand||'Brand')} website</a>`):''}<h3 class="rh">Reviews (${p.cn})<button class="wr" id="wr">Write a review</button></h3><div id="rf"></div><div id="prl">${revHTML(p.reviews)}</div></div>`;curP=[b,p];$('#pb').scrollTop=0;openS($('#prod'))}
+let curP=null;
+$('#pb').addEventListener('click',e=>{if(!curP)return;const[b,p]=curP;
+ if(e.target.id=='wr'){$('#rf').innerHTML=`<div class="rform"><div class="stp">${[1,2,3,4,5].map(n=>`<button data-s="${n}">☆</button>`).join('')}</div><textarea id="rt" rows="3" placeholder="What did you think of this product?"></textarea><button class="send" id="rs">Post review</button></div>`;$('#rf').dataset.s=0}
+ const st=e.target.closest('.stp [data-s]');if(st){const n=+st.dataset.s;$('#rf').dataset.s=n;$('#rf').querySelectorAll('.stp button').forEach((x,i)=>x.textContent=i<n?'★':'☆')}
+ if(e.target.id=='rs'){const n=+$('#rf').dataset.s,t=$('#rt').value.trim();if(!n)return toast('Tap a star rating first');
+  const r={id:'local'+Date.now(),user:{name:ME?ME.name:'You',avatar_initials:'YOU',handle:'@you'},stars:n,text:t,date:new Date().toISOString().slice(0,10)};
+  p.reviews.unshift(r);p.cn=p.reviews.length;p.cs=Math.round(p.reviews.reduce((a,x)=>a+x.stars,0)/p.cn*10)/10;
+  try{const L=JSON.parse(localStorage.ftoPR||'{}');(L[p.product_id]??=[]).unshift(r);localStorage.ftoPR=JSON.stringify(L)}catch(_){}
+  scorecard(b,p);toast('Review posted (saved on this device only)',1800)}});
 function open(b){if(sel)pins[sel.id].classList.remove('sel');sel=b;pins[b.id].classList.add('sel');card(b);$('#cb').scrollTop=0;openS($('#card'));map.easeTo({center:[b.lng,b.lat],offset:[0,-140],duration:250})}
 // filters
 const FO={score:{t:'Minimum FoodTO score',o:[[null,'Any'],[80,'80+'],[60,'60+'],[40,'40+'],[20,'20+']]},price:{t:'Price point',o:[[null,'Any'],['$','$'],['$$','$$'],['$$$','$$$'],['$$$$','$$$$']]},dist:{t:'Distance from you',o:[[null,'Any'],[0.5,'Within 500 m'],[1,'Within 1 km'],[2,'Within 2 km'],[5,'Within 5 km']]}};
-const pass=b=>(F.score==null||(b.foodto_score!=null&&b.foodto_score>=F.score))&&(F.price==null||b.price_point==F.price)&&(F.dist==null||(me&&km(me,[b.lng,b.lat])<=F.dist));
-function apply(){let n=0;biz.forEach(b=>{const ok=pass(b);pins[b.id].style.display=ok?'':'none';n+=ok});
+const passB=b=>(F.price==null||b.price_point==F.price)&&(F.dist==null||(me&&km(me,[b.lng,b.lat])<=F.dist));const pass=b=>passB(b)&&(F.score==null||(b.foodto_score!=null&&b.foodto_score>=F.score));
+function apply(){let n=0;biz.forEach(b=>{const ok=pass(b);pins[b.id].style.display=ok&&view=='b'?'':'none';n+=ok});syncPM();
  document.querySelectorAll('[data-f]').forEach(c=>{const v=F[c.dataset.f];c.classList.toggle('on',v!=null);c.lastChild.textContent=v==null?{score:'FoodTO score',price:'Price',dist:'Distance'}[c.dataset.f]:FO[c.dataset.f].o.find(o=>o[0]===v)[1]});
- const any=Object.values(F).some(v=>v!=null);$('#clear').style.display=any?'':'none';$('#count').textContent=any?`${n} of ${biz.length} businesses`:`${biz.length} independent businesses`;
- if(any&&!n)toast(F.score!=null||F.price!=null?F.price!=null&&!biz.some(b=>b.price_point)?'No price data yet':'No matches':'No businesses in range',2200)}
+ const any=Object.values(F).some(v=>v!=null);$('#clear').style.display=any?'':'none';if(view=='b')$('#count').textContent=any?`${n} of ${biz.length} businesses`:`${biz.length} independent businesses`;
+ if(any&&!n&&view=='b')toast(F.score!=null||F.price!=null?F.price!=null&&!biz.some(b=>b.price_point)?'No price data yet':'No matches':'No businesses in range',2200)}
 document.querySelectorAll('[data-f]').forEach(c=>c.onclick=()=>{const k=c.dataset.f,f=FO[k];
  $('#fb').innerHTML=`<h3>${f.t}</h3>`+(k=='price'&&!biz.some(b=>b.price_point)?'<div class="note">No price points in the data yet, so this filter will show nothing.</div>':'')+f.o.map((o,i)=>`<button data-i="${i}" class="${F[k]===o[0]?'on':''}">${o[1]}</button>`).join('');
  $('#fb').onclick=e=>{const b=e.target.closest('[data-i]');if(!b)return;const v=f.o[b.dataset.i][0];
@@ -141,6 +159,17 @@ function locate(cb){if(!navigator.geolocation)return toast('Location not support
   meMk.setLngLat(me).addTo(map);map.flyTo({center:me,zoom:15,duration:500});cb&&cb()},()=>toast('Location unavailable. Allow location access to use this.',2200),{enableHighAccuracy:true,timeout:8000,maximumAge:60000})}
 $('#locate').onclick=()=>locate(apply);
 document.querySelectorAll('[data-s]').forEach(b=>b.onclick=()=>toast(b.textContent.replace(/\W+/u,'').trim()+' is coming soon'));
-fetch('data.json').then(r=>r.json()).then(D=>{const d=D.businesses;ME=D.me;biz=d;d.forEach(b=>{const el=document.createElement('div');el.className='pin';el.innerHTML='<span></span>';el.dataset.id=b.id;
+let view='b';const pms=[];
+const OFF=i=>{if(!i)return[0,0];let r,n,k;if(i<=6){r=60;n=6;k=i-1}else if(i<=18){r=116;n=12;k=i-7}else{r=172;n=18;k=i-19}const a=k/n*2*Math.PI-Math.PI/2;return[Math.round(r*Math.cos(a)),Math.round(r*Math.sin(a))]};
+function buildPM(){biz.forEach(b=>{[...b.products].map((p,i)=>[p,i]).sort((x,y)=>(y[0].fs??-1)-(x[0].fs??-1)).forEach(([p,i],rank)=>{const el=document.createElement('div');el.className='pm'+(rank?'':' top');
+ el.innerHTML=`<div class="pw">${p.img?`<img loading="lazy" decoding="async" src="${p.img}" alt="">`:`<div class="pp">${esc((p.brand||p.name)[0])}</div>`}</div><div class="ps">${IC.fs}${p.fs??'–'}</div>`;
+ el.addEventListener('click',e=>{e.stopPropagation();scorecard(b,p)});const m=new maplibregl.Marker({element:el,offset:OFF(rank)}).setLngLat([b.lng,b.lat]);pms.push({m,el,b,p,rank,on:false})})})}
+const perZoom=z=>z<15?1:z<16?3:z<17?7:z<18?19:99;
+function syncPM(){const n=perZoom(map.getZoom());pms.forEach(o=>{const show=view=='p'&&o.rank<n&&passB(o.b)&&(F.score==null||(o.p.fs!=null&&o.p.fs>=F.score));if(show!==o.on){o.on=show;show?o.m.addTo(map):o.m.remove()}});
+ if(view=='p')$('#count').textContent=`${pms.filter(o=>o.on).length} products shown · zoom in for more`}
+let zr=0;map.on('zoom',()=>{if(view=='p'&&!zr)zr=requestAnimationFrame(()=>{zr=0;syncPM()})});
+$('#vt').onclick=e=>{const t=e.target.closest('[data-v]');if(!t||t.dataset.v==view)return;view=t.dataset.v;$('#vt').querySelectorAll('button').forEach(x=>x.classList.toggle('on',x==t));document.querySelectorAll('.sheet.open').forEach(closeS);
+ if(!pms.length)buildPM();apply();if(view=='p'&&map.getZoom()<15)map.easeTo({zoom:15,duration:300})};
+fetch('data.json').then(r=>r.json()).then(D=>{const d=D.businesses;ME=D.me;biz=d;try{const L=JSON.parse(localStorage.ftoPR||'{}');d.forEach(b=>b.products.forEach(p=>{if(L[p.product_id]){p.reviews=[...L[p.product_id],...p.reviews];p.cn=p.reviews.length;p.cs=Math.round(p.reviews.reduce((a,x)=>a+x.stars,0)/p.cn*10)/10}}))}catch(_){}d.forEach(b=>{const el=document.createElement('div');el.className='pin';el.innerHTML='<span></span>';el.dataset.id=b.id;
  el.addEventListener('click',e=>{e.stopPropagation();open(b)});pins[b.id]=el;new maplibregl.Marker({element:el,anchor:'bottom'}).setLngLat([b.lng,b.lat]).addTo(map)});const bb=new maplibregl.LngLatBounds();d.forEach(b=>bb.extend([b.lng,b.lat]));map.fitBounds(bb,{padding:{top:150,bottom:70,left:40,right:40},duration:0});apply()});
 </script></body></html>
