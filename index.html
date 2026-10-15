@@ -3,52 +3,115 @@
 <meta name="theme-color" content="#1b7f3b"><meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="FoodTO"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icon.svg"><link rel="apple-touch-icon" href="icon.svg">
-<title>FoodTO Map</title>
-<link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css">
+<title>FoodTO</title>
+<link rel="preconnect" href="https://tiles.openfreemap.org"><link rel="stylesheet" href="maplibre-gl.css">
 <style>
-*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}html,body{margin:0;height:100%;overflow:hidden;font:16px system-ui,-apple-system,sans-serif;overscroll-behavior:none}
-#map{position:fixed;inset:0;bottom:calc(64px + env(safe-area-inset-bottom))}
-#search{position:fixed;top:calc(10px + env(safe-area-inset-top));left:12px;right:12px;z-index:5;display:flex;gap:8px;align-items:center;background:#fff;border-radius:28px;box-shadow:0 2px 8px #0003;padding:0 16px;height:52px}
-#search input{flex:1;border:0;outline:0;font-size:17px;background:none}
-#results{position:fixed;top:calc(68px + env(safe-area-inset-top));left:12px;right:12px;z-index:5;background:#fff;border-radius:16px;box-shadow:0 2px 8px #0003;display:none}
-#results div{padding:16px;min-height:52px}
-.btn{position:fixed;right:14px;z-index:4;width:52px;height:52px;border-radius:26px;border:0;background:#fff;box-shadow:0 2px 8px #0004;font-size:22px}
-#locate{bottom:calc(84px + env(safe-area-inset-bottom))}
-.pin{width:44px;height:44px;display:flex;align-items:center;justify-content:center;cursor:pointer}
-.pin span{width:30px;height:30px;border-radius:50% 50% 50% 0;background:#1b7f3b;transform:rotate(-45deg);border:3px solid #fff;box-shadow:0 2px 6px #0006}
-#nav{position:fixed;left:0;right:0;bottom:0;z-index:6;height:calc(64px + env(safe-area-inset-bottom));padding-bottom:env(safe-area-inset-bottom);background:#fff;display:flex;border-top:1px solid #ddd}
-#nav button{flex:1;border:0;background:none;font-size:13px;color:#666}#nav button b{display:block;font-size:22px}#nav .on{color:#1b7f3b;font-weight:600}
-#sheet{position:fixed;left:0;right:0;bottom:0;z-index:7;background:#fff;border-radius:18px 18px 0 0;box-shadow:0 -4px 16px #0003;padding:8px 20px calc(20px + env(safe-area-inset-bottom));transform:translateY(110%);transition:transform .18s ease-out;touch-action:none}
-#sheet.open{transform:none}#grab{width:44px;height:5px;border-radius:3px;background:#ccc;margin:4px auto 12px}
-#sheet h2{margin:0 0 4px;font-size:20px}#sheet .cat{color:#1b7f3b;font-size:14px;margin-bottom:10px}#sheet p{margin:6px 0;font-size:15px;color:#333}
-.acts{display:flex;gap:10px;margin-top:14px}.acts a{flex:1;text-align:center;padding:15px;border-radius:12px;background:#1b7f3b;color:#fff;text-decoration:none;font-weight:600}.acts a.sec{background:#e8f3eb;color:#1b7f3b}
-#toast{position:fixed;top:40%;left:50%;transform:translateX(-50%);background:#000c;color:#fff;padding:12px 18px;border-radius:12px;z-index:9;display:none}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}html,body{margin:0;height:100%;overflow:hidden;font:16px system-ui,-apple-system,sans-serif;overscroll-behavior:none;color:#1d1d1f}
+button{font:inherit;color:inherit;touch-action:manipulation;cursor:pointer}
+:root{--g:#1b7f3b;--gl:#e8f3eb;--nav:calc(64px + env(safe-area-inset-bottom))}
+#map{position:fixed;inset:0;bottom:var(--nav)}
+#top{pointer-events:none;position:fixed;top:calc(10px + env(safe-area-inset-top));left:0;right:0;z-index:5}
+#search,#results,.chip{pointer-events:auto}#search{margin:0 12px;display:flex;gap:8px;align-items:center;background:#fff;border-radius:26px;box-shadow:0 2px 8px #0003;padding:0 16px;height:50px}
+#search input{flex:1;border:0;outline:0;font-size:17px;background:none;min-width:0}
+#chips{display:flex;gap:8px;overflow-x:auto;padding:10px 12px;scrollbar-width:none}#chips::-webkit-scrollbar{display:none}
+.chip{flex:none;height:38px;padding:0 14px;border-radius:19px;border:0;background:#fff;box-shadow:0 1px 4px #0003;font-size:14px;font-weight:500;display:flex;align-items:center;gap:6px;white-space:nowrap}
+.chip.on{background:var(--g);color:#fff}
+.fto{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:6px;background:var(--g);color:#fff;font-size:10px;font-weight:800;letter-spacing:-.5px}.chip.on .fto{background:#fff;color:var(--g)}
+#results{margin:0 12px;background:#fff;border-radius:16px;box-shadow:0 2px 8px #0003;display:none;max-height:50vh;overflow:auto}
+#results div{padding:14px 16px;border-bottom:1px solid #eee}#results small{color:#666}
+.fab{position:fixed;right:14px;bottom:calc(var(--nav) + 18px);z-index:4;width:52px;height:52px;border-radius:26px;border:0;background:#fff;box-shadow:0 2px 8px #0004;font-size:22px}
+.pin{width:44px;height:48px;display:flex;align-items:flex-end;justify-content:center;cursor:pointer}
+.pin span{width:30px;height:30px;margin-bottom:6px;border-radius:50% 50% 50% 0;background:var(--g);transform:rotate(-45deg);border:3px solid #fff;box-shadow:0 2px 6px #0006}
+.pin.sel span{background:#d93025;width:36px;height:36px}
+#nav{position:fixed;left:0;right:0;bottom:0;z-index:8;height:var(--nav);padding-bottom:env(safe-area-inset-bottom);background:#fff;display:flex;border-top:1px solid #ddd}
+#nav button{flex:1;border:0;background:none;font-size:12px;color:#666}#nav button b{display:block;font-size:22px;line-height:28px}#nav .on{color:var(--g);font-weight:600}
+.sheet{position:fixed;left:0;right:0;bottom:var(--nav);z-index:7;background:#fff;border-radius:18px 18px 0 0;box-shadow:0 -4px 16px #0003;transform:translateY(calc(100% + var(--nav)));transition:transform .2s cubic-bezier(.2,.8,.2,1);will-change:transform;max-height:72vh;display:flex;flex-direction:column}
+.sheet.open{transform:none}.grab{padding:10px 0 6px;touch-action:none}.grab i{display:block;width:44px;height:5px;border-radius:3px;background:#ccc;margin:auto}
+.sb{overflow:auto;padding:0 20px 18px;overscroll-behavior:contain}
+h2{margin:2px 0;font-size:21px}.cat{color:#666;font-size:14px}
+.badges{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}.bdg{background:#f3f3f3;border-radius:10px;padding:6px 10px;font-size:13px;display:flex;gap:6px;align-items:center}.bdg.na{color:#999}
+.tabs{display:flex;border-bottom:1px solid #eee;margin:4px -20px 10px;padding:0 12px;position:sticky;top:0;background:#fff}
+.tabs button{flex:1;border:0;background:none;padding:12px 0;font-size:15px;color:#666;border-bottom:3px solid transparent}.tabs .on{color:var(--g);border-color:var(--g);font-weight:600}
+.row{display:flex;gap:12px;padding:9px 0;font-size:15px;border-bottom:1px solid #f2f2f2}.row b{width:22px;flex:none;text-align:center}
+.acts{display:flex;gap:10px;margin:12px 0 4px}.acts a{flex:1;text-align:center;padding:14px;border-radius:12px;background:var(--g);color:#fff;text-decoration:none;font-weight:600}.acts a.sec{background:var(--gl);color:var(--g)}.acts a.off{opacity:.4;pointer-events:none}
+.empty{color:#888;font-size:14px;padding:14px 0}.prod{display:flex;justify-content:space-between;padding:11px 0;border-bottom:1px solid #f2f2f2}.prod small{color:#888}
+.opts{padding:4px 20px 20px}.opts h3{margin:4px 0 12px}.opts button{display:block;width:100%;text-align:left;padding:15px;border:0;border-radius:12px;background:#f5f5f5;margin-bottom:8px;font-size:16px}.opts button.on{background:var(--gl);color:var(--g);font-weight:600}
+#toast{position:fixed;top:45%;left:50%;transform:translateX(-50%);background:#000c;color:#fff;padding:12px 18px;border-radius:12px;z-index:20;display:none;text-align:center;max-width:80vw}
+#count{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(var(--nav) + 24px);z-index:4;background:#fff;border-radius:16px;padding:7px 14px;font-size:13px;box-shadow:0 1px 4px #0003}
 </style></head><body>
 <div id="map"></div>
-<div id="search">🔍<input id="q" placeholder="Search independent food in Toronto" autocomplete="off"></div>
-<div id="results"></div>
-<button class="btn" id="locate" aria-label="Locate me">◎</button>
-<div id="sheet"><div id="grab"></div><div id="card"></div></div>
+<div id="top"><div id="search">🔍<input id="q" placeholder="Search FoodTO businesses" autocomplete="off" enterkeyhint="search"></div><div id="results"></div>
+<div id="chips"><button class="chip" data-f="score"><span class="fto">TO</span>FoodTO score</button><button class="chip" data-f="price">Price</button><button class="chip" data-f="dist">Distance</button><button class="chip" id="clear" style="display:none">✕ Clear</button></div></div>
+<div id="count"></div>
+<button class="fab" id="locate" aria-label="Locate me">◎</button>
+<div class="sheet" id="card"><div class="grab"><i></i></div><div class="sb" id="cb"></div></div>
+<div class="sheet" id="filt"><div class="grab"><i></i></div><div class="opts" id="fb"></div></div>
 <nav id="nav"><button class="on"><b>🗺️</b>Map</button><button data-s><b>📷</b>Scan</button><button data-s><b>✨</b>Discover</button><button data-s><b>💬</b>Chat</button></nav>
-<div id="toast">Coming soon</div>
-<script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+<div id="toast"></div>
+<script src="maplibre-gl.js"></script>
 <script>
-const $=s=>document.querySelector(s);let biz=[];
-const map=new maplibregl.Map({container:'map',style:'https://tiles.openfreemap.org/styles/liberty',center:[-79.41207,43.6554402],zoom:15,attributionControl:{compact:true},dragRotate:false,pitchWithRotate:false});
+const $=s=>document.querySelector(s),esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+let biz=[],sel=null,me=null,meMk=null;const F={score:null,price:null,dist:null},pins={};
+const map=new maplibregl.Map({container:'map',style:'https://tiles.openfreemap.org/styles/liberty',center:[-79.4145,43.6625],zoom:14.2,attributionControl:{compact:true},dragRotate:false,pitchWithRotate:false,fadeDuration:0});
 map.touchZoomRotate.disableRotation();
-const sheet=$('#sheet');
-function open(b){$('#card').innerHTML=`<h2>${b.name}</h2><div class="cat">${b.category}</div><p>📍 ${b.address}</p><p>🕒 ${b.hours}</p><p>📞 ${b.phone}</p><p>🌐 <a href="${b.website}" target="_blank" rel="noopener">${b.website.replace(/^https?:\/\/(www\.)?/,'').split('/')[0]}</a></p><div class="acts"><a href="https://www.google.com/maps/dir/?api=1&destination=${b.lat},${b.lng}" target="_blank">Directions</a><a class="sec" href="tel:${b.phone.replace(/[^\d+]/g,'')}">Call</a></div>`;sheet.style.transform='';sheet.classList.add('open');map.easeTo({center:[b.lng,b.lat],offset:[0,-120],duration:300})}
-function close(){sheet.style.transform='';sheet.classList.remove('open')}
-map.on('click',close);
-let y0=null,dy=0;sheet.addEventListener('touchstart',e=>{y0=e.touches[0].clientY;dy=0;sheet.style.transition='none'},{passive:true});
-sheet.addEventListener('touchmove',e=>{dy=Math.max(0,e.touches[0].clientY-y0);sheet.style.transform=`translateY(${dy}px)`},{passive:true});
-sheet.addEventListener('touchend',()=>{sheet.style.transition='';if(dy>60)close();else sheet.style.transform='';y0=null});
-$('#grab').onclick=close;
-fetch('businesses.json').then(r=>r.json()).then(d=>{biz=d;d.forEach(b=>{const el=document.createElement('div');el.className='pin';el.innerHTML='<span></span>';el.addEventListener('click',e=>{e.stopPropagation();open(b)});new maplibregl.Marker({element:el,anchor:'bottom'}).setLngLat([b.lng,b.lat]).addTo(map)})});
+function toast(t,ms=1400){const x=$('#toast');x.textContent=t;x.style.display='block';clearTimeout(toast.t);toast.t=setTimeout(()=>x.style.display='none',ms)}
+// sheets: tap handle or swipe down to close
+function openS(el){document.querySelectorAll('.sheet.open').forEach(s=>s!==el&&closeS(s));el.style.transform='';el.classList.add('open')}
+function closeS(el){el.style.transform='';el.classList.remove('open');if(el.id=='card'&&sel){pins[sel.id].classList.remove('sel');sel=null}}
+document.querySelectorAll('.sheet').forEach(s=>{const g=s.querySelector('.grab'),b=s.querySelector('.sb,.opts');let y0=null,dy=0;
+ const start=e=>{y0=e.touches[0].clientY;dy=0;s.style.transition='none'};
+ g.addEventListener('touchstart',start,{passive:true});
+ b.addEventListener('touchstart',e=>{if(b.scrollTop<=0)start(e);else y0=null},{passive:true});
+ s.addEventListener('touchmove',e=>{if(y0==null)return;dy=e.touches[0].clientY-y0;if(dy>0)s.style.transform=`translateY(${dy}px)`;else{dy=0;s.style.transform=''}},{passive:true});
+ s.addEventListener('touchend',()=>{if(y0==null)return;s.style.transition='';dy>70?closeS(s):s.style.transform='';y0=null});
+ g.addEventListener('click',()=>closeS(s))});
+map.on('click',()=>document.querySelectorAll('.sheet.open').forEach(closeS));
+const km=(a,b)=>{const R=6371,r=x=>x*Math.PI/180,dl=r(b[1]-a[1]),dg=r(b[0]-a[0]);const h=Math.sin(dl/2)**2+Math.cos(r(a[1]))*Math.cos(r(b[1]))*Math.sin(dg/2)**2;return 2*R*Math.asin(Math.sqrt(h))};
+const na='<span class="bdg na">';
+function card(b,tab='overview'){
+ const d=me?` · ${km(me,[b.lng,b.lat]).toFixed(1)} km`:'';
+ const cr=b.community_rating!=null?`<span class="bdg">⭐ ${b.community_rating} <small>(${b.community_review_count} ${esc(b.community_rating_source)})</small></span>`:na+'⭐ Community: none yet</span>';
+ const nr=b.nisa_rating!=null?`<span class="bdg">🌱 Nisa ${b.nisa_rating}</span>`:na+'🌱 Nisa rating: pending</span>';
+ const sc=b.foodto_score!=null?`<span class="bdg"><span class="fto">TO</span> ${b.foodto_score}/100</span>`:na+'<span class="fto" style="opacity:.4">TO</span> Score pending</span>';
+ const pp=b.price_point?`<span class="bdg">${esc(b.price_point)}</span>`:na+'$ Price: n/a</span>';
+ let body='';
+ if(tab=='overview')body=`${b.description?`<p style="margin:4px 0 8px;font-size:15px">${esc(b.description)}</p>`:''}
+  <div class="row"><b>📍</b><span>${esc(b.address)}</span></div><div class="row"><b>🕒</b><span>${esc(b.hours).replace(/; /g,'<br>')}</span></div>
+  <div class="row"><b>📞</b><span>${esc(b.phone)}</span></div>${b.website?`<div class="row"><b>🌐</b><a href="${esc(b.website)}" target="_blank" rel="noopener">${esc(b.website.replace(/^https?:\/\/(www\.)?/,'').replace(/\/$/,''))}</a></div>`:''}`;
+ else if(tab=='reviews')body=b.reviews.length?b.reviews.map(r=>`<div class="prod"><div><b>${esc(r.user_name)}</b> ${'★'.repeat(r.stars|0)}<br><small>${esc(r.comment)}</small></div></div>`).join(''):'<div class="empty">No FoodTO reviews yet. Be the first (coming soon).</div>';
+ else body=b.products.length?b.products.map(p=>`<div class="prod"><div>${esc(p.name)}<br><small>${esc(p.category)}</small></div><span>${esc(p.price)}</span></div>`).join(''):'<div class="empty">Catalogue not added yet.</div>';
+ $('#cb').innerHTML=`<h2>${esc(b.name)}</h2><div class="cat">${esc(b.category)}${d}</div><div class="badges">${sc}${nr}${cr}${pp}</div>
+ <div class="acts"><a href="https://www.google.com/maps/dir/?api=1&destination=${b.lat},${b.lng}" target="_blank">Directions</a><a class="sec ${b.phone?'':'off'}" href="tel:${b.phone.replace(/[^\d+]/g,'')}">Call</a></div>
+ <div class="tabs">${['overview','reviews','catalogue'].map(t=>`<button data-t="${t}" class="${t==tab?'on':''}">${t[0].toUpperCase()+t.slice(1)}${t=='reviews'?` (${b.reviews.length})`:''}</button>`).join('')}</div>${body}`;
+}
+$('#cb').addEventListener('click',e=>{const t=e.target.closest('[data-t]');if(t&&sel)card(sel,t.dataset.t)});
+function open(b){if(sel)pins[sel.id].classList.remove('sel');sel=b;pins[b.id].classList.add('sel');card(b);$('#cb').scrollTop=0;openS($('#card'));map.easeTo({center:[b.lng,b.lat],offset:[0,-140],duration:250})}
+// filters
+const FO={score:{t:'Minimum FoodTO score',o:[[null,'Any'],[90,'90+'],[80,'80+'],[70,'70+'],[60,'60+']]},price:{t:'Price point',o:[[null,'Any'],['$','$'],['$$','$$'],['$$$','$$$'],['$$$$','$$$$']]},dist:{t:'Distance from you',o:[[null,'Any'],[0.5,'Within 500 m'],[1,'Within 1 km'],[2,'Within 2 km'],[5,'Within 5 km']]}};
+const pass=b=>(F.score==null||(b.foodto_score!=null&&b.foodto_score>=F.score))&&(F.price==null||b.price_point==F.price)&&(F.dist==null||(me&&km(me,[b.lng,b.lat])<=F.dist));
+function apply(){let n=0;biz.forEach(b=>{const ok=pass(b);pins[b.id].style.display=ok?'':'none';n+=ok});
+ document.querySelectorAll('[data-f]').forEach(c=>{const v=F[c.dataset.f];c.classList.toggle('on',v!=null);c.lastChild.textContent=v==null?{score:'FoodTO score',price:'Price',dist:'Distance'}[c.dataset.f]:FO[c.dataset.f].o.find(o=>o[0]===v)[1]});
+ const any=Object.values(F).some(v=>v!=null);$('#clear').style.display=any?'':'none';$('#count').textContent=any?`${n} of ${biz.length} businesses`:`${biz.length} independent businesses`;
+ if(any&&!n)toast(F.score!=null||F.price!=null?'No matches: scores/prices not added to the data yet':'No businesses in range',2200)}
+document.querySelectorAll('[data-f]').forEach(c=>c.onclick=()=>{const k=c.dataset.f,f=FO[k];
+ $('#fb').innerHTML=`<h3>${f.t}</h3>`+f.o.map((o,i)=>`<button data-i="${i}" class="${F[k]===o[0]?'on':''}">${o[1]}</button>`).join('');
+ $('#fb').onclick=e=>{const b=e.target.closest('[data-i]');if(!b)return;const v=f.o[b.dataset.i][0];
+  const done=()=>{F[k]=v;apply();closeS($('#filt'))};
+  if(k=='dist'&&v!=null&&!me)locate(done);else done()};
+ openS($('#filt'))});
+$('#clear').onclick=()=>{F.score=F.price=F.dist=null;apply()};
+// search
 const q=$('#q'),res=$('#results');
-q.oninput=()=>{const t=q.value.trim().toLowerCase();const m=t?biz.filter(b=>(b.name+b.category+b.address+b.description).toLowerCase().includes(t)):[];res.innerHTML=m.map((b,i)=>`<div data-i="${biz.indexOf(b)}">${b.name}<br><small>${b.address}</small></div>`).join('')||(t?'<div>No matches</div>':'');res.style.display=t?'block':'none'};
-res.onclick=e=>{const d=e.target.closest('[data-i]');if(!d)return;open(biz[d.dataset.i]);res.style.display='none';q.blur()};
-let me;$('#locate').onclick=()=>{if(!navigator.geolocation)return;navigator.geolocation.getCurrentPosition(p=>{const c=[p.coords.longitude,p.coords.latitude];if(!me){const el=document.createElement('div');el.style.cssText='width:18px;height:18px;border-radius:9px;background:#1a73e8;border:3px solid #fff;box-shadow:0 0 0 6px #1a73e833';me=new maplibregl.Marker({element:el})}me.setLngLat(c).addTo(map);map.flyTo({center:c,zoom:15,duration:600})},()=>toast('Location unavailable'),{enableHighAccuracy:true,timeout:8000})};
-function toast(t){const x=$('#toast');x.textContent=t;x.style.display='block';setTimeout(()=>x.style.display='none',1200)}
-document.querySelectorAll('[data-s]').forEach(b=>b.onclick=()=>toast('Coming soon'));
+q.oninput=()=>{const t=q.value.trim().toLowerCase();const m=t?biz.filter(b=>[b.name,b.category,b.address,b.description,...b.products.map(p=>p.name)].join(' ').toLowerCase().includes(t)):[];
+ res.innerHTML=m.map(b=>`<div data-id="${b.id}">${esc(b.name)}<br><small>${esc(b.category)} · ${esc(b.address)}</small></div>`).join('')||(t?'<div class="empty" style="padding:14px 16px">No matches</div>':'');res.style.display=t?'block':'none'};
+res.onclick=e=>{const d=e.target.closest('[data-id]');if(!d)return;open(biz.find(b=>b.id==d.dataset.id));res.style.display='none';q.value='';q.blur()};
+// locate
+function locate(cb){if(!navigator.geolocation)return toast('Location not supported');toast('Finding you…',8000);
+ navigator.geolocation.getCurrentPosition(p=>{me=[p.coords.longitude,p.coords.latitude];$('#toast').style.display='none';
+  if(!meMk){const el=document.createElement('div');el.style.cssText='width:18px;height:18px;border-radius:9px;background:#1a73e8;border:3px solid #fff;box-shadow:0 0 0 6px #1a73e833';meMk=new maplibregl.Marker({element:el})}
+  meMk.setLngLat(me).addTo(map);map.flyTo({center:me,zoom:15,duration:500});cb&&cb()},()=>toast('Location unavailable. Allow location access to use this.',2200),{enableHighAccuracy:true,timeout:8000,maximumAge:60000})}
+$('#locate').onclick=()=>locate(apply);
+document.querySelectorAll('[data-s]').forEach(b=>b.onclick=()=>toast(b.textContent.replace(/\W+/u,'').trim()+' is coming soon'));
+fetch('data.json').then(r=>r.json()).then(d=>{biz=d;d.forEach(b=>{const el=document.createElement('div');el.className='pin';el.innerHTML='<span></span>';el.dataset.id=b.id;
+ el.addEventListener('click',e=>{e.stopPropagation();open(b)});pins[b.id]=el;new maplibregl.Marker({element:el,anchor:'bottom'}).setLngLat([b.lng,b.lat]).addTo(map)});const bb=new maplibregl.LngLatBounds();d.forEach(b=>bb.extend([b.lng,b.lat]));map.fitBounds(bb,{padding:{top:150,bottom:70,left:40,right:40},duration:0});apply()});
 </script></body></html>

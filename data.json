@@ -1,0 +1,267 @@
+[
+ {
+  "id": "healthy-planet-college-bathurst",
+  "name": "Healthy Planet - College & Bathurst",
+  "category": "Health Food Store",
+  "address": "555 College St, Unit 1, Toronto, ON M6G 1A9",
+  "lat": 43.6554402,
+  "lng": -79.41207,
+  "hours": "Mon-Fri 9:00 AM-9:00 PM; Sat-Sun 10:00 AM-7:00 PM",
+  "phone": "(416) 925-0776",
+  "website": "https://www.healthyplanetcanada.com/storelocator/college-bathurst",
+  "description": "Vitamins, supplements, sports nutrition, pet care, frozen food, grocery, household & cleaning, produce.",
+  "image_url": "",
+  "nisa_rating": null,
+  "foodto_score": null,
+  "community_rating": null,
+  "community_review_count": null,
+  "community_rating_source": "",
+  "price_point": "",
+  "source": "Google Maps link; healthyplanetcanada.com store page",
+  "products": [
+   {
+    "business_id": "healthy-planet-college-bathurst",
+    "name": "Vitamins & supplements",
+    "category": "Health",
+    "price": "",
+    "source": "healthyplanetcanada.com store page"
+   },
+   {
+    "business_id": "healthy-planet-college-bathurst",
+    "name": "Sports nutrition",
+    "category": "Health",
+    "price": "",
+    "source": "healthyplanetcanada.com store page"
+   },
+   {
+    "business_id": "healthy-planet-college-bathurst",
+    "name": "Frozen food",
+    "category": "Grocery",
+    "price": "",
+    "source": "healthyplanetcanada.com store page"
+   },
+   {
+    "business_id": "healthy-planet-college-bathurst",
+    "name": "Produce",
+    "category": "Grocery",
+    "price": "",
+    "source": "healthyplanetcanada.com store page"
+   },
+   {
+    "business_id": "healthy-planet-college-bathurst",
+    "name": "Pet care",
+    "category": "Household",
+    "price": "",
+    "source": "healthyplanetcanada.com store page"
+   }
+  ],
+  "reviews": []
+ },
+ {
+  "id": "karma-co-op",
+  "name": "Karma Co-op",
+  "category": "Food Co-op",
+  "address": "739 Palmerston Ave (on Karma Lane), Toronto, ON M6G 2R3",
+  "lat": 43.6681059,
+  "lng": -79.4144806,
+  "hours": "Mon 11:00 AM-8:00 PM; Tue-Fri 9:00 AM-8:00 PM; Sat 9:00 AM-6:00 PM; Sun 10:00 AM-6:00 PM",
+  "phone": "(416) 534-1470",
+  "website": "https://www.karmacoop.org/",
+  "description": "Member-run grocery co-op in a historic building on a laneway just west of Bathurst.",
+  "image_url": "",
+  "nisa_rating": null,
+  "foodto_score": null,
+  "community_rating": null,
+  "community_review_count": null,
+  "community_rating_source": "",
+  "price_point": "",
+  "source": "No link in doc; coords from OpenStreetMap (Nominatim) for the address; karmacoop.org/contact",
+  "products": [],
+  "reviews": []
+ },
+ {
+  "id": "fiesta-farms",
+  "name": "Fiesta Farms",
+  "category": "Grocery Store",
+  "address": "200 Christie St, Toronto, ON M6G 3B6",
+  "lat": 43.6685995,
+  "lng": -79.4207375,
+  "hours": "Mon-Sat 8:00 AM-8:00 PM; Sun 9:00 AM-7:00 PM",
+  "phone": "(416) 537-1235",
+  "website": "https://fiestafarms.ca/",
+  "description": "Independent grocery store with a garden centre; weekly specials every Friday.",
+  "image_url": "",
+  "nisa_rating": null,
+  "foodto_score": null,
+  "community_rating": 4.1,
+  "community_review_count": 68.0,
+  "community_rating_source": "Yelp",
+  "price_point": "",
+  "source": "No link in doc; coords from OpenStreetMap (Nominatim); fiestafarms.ca; Yelp",
+  "products": [
+   {
+    "business_id": "fiesta-farms",
+    "name": "Garden centre",
+    "category": "Garden",
+    "price": "",
+    "source": "fiestafarms.ca"
+   }
+  ],
+  "reviews": []
+ },
+ {
+  "id": "summerhill-market-annex",
+  "name": "Summerhill Market - Annex",
+  "category": "Grocery Store",
+  "address": "1014 Bathurst St, Toronto, ON M5R 3G7",
+  "lat": 43.6708587,
+  "lng": -79.4137074,
+  "hours": "Mon-Sun 8:00 AM-8:00 PM",
+  "phone": "(416) 350-1678",
+  "website": "https://www.summerhillmarket.com/",
+  "description": "Family-owned since 1954: scratch bakery, fresh produce, prepared foods.",
+  "image_url": "",
+  "nisa_rating": null,
+  "foodto_score": null,
+  "community_rating": 3.6,
+  "community_review_count": 5.0,
+  "community_rating_source": "Yelp",
+  "price_point": "",
+  "source": "Google Maps link; summerhillmarket.com/locations; Yelp",
+  "products": [
+   {
+    "business_id": "summerhill-market-annex",
+    "name": "Scratch bakery",
+    "category": "Bakery",
+    "price": "",
+    "source": "loc8nearme business description"
+   },
+   {
+    "business_id": "summerhill-market-annex",
+    "name": "Prepared foods",
+    "category": "Prepared food",
+    "price": "",
+    "source": "loc8nearme business description"
+   }
+  ],
+  "reviews": []
+ },
+ {
+  "id": "mabels-bakery-college",
+  "name": "Mabel's Bakery & Specialty Foods",
+  "category": "Bakery",
+  "address": "576 College St, Toronto, ON M6G 1B2",
+  "lat": 43.6555274,
+  "lng": -79.4131322,
+  "hours": "Mon-Thu 7:30 AM-7:00 PM; Fri 7:30 AM-9:00 PM; Sat 8:00 AM-9:00 PM; Sun 8:00 AM-6:00 PM",
+  "phone": "(416) 534-2333",
+  "website": "https://mabelsbakery.ca/",
+  "description": "Home-style baked goods made from scratch, prepared foods, ready meals, artisan breads and cheeses.",
+  "image_url": "",
+  "nisa_rating": null,
+  "foodto_score": null,
+  "community_rating": null,
+  "community_review_count": null,
+  "community_rating_source": "",
+  "price_point": "",
+  "source": "Google Maps link; mabelsbakery.ca/pages/locations (phone listed is the company's main line)",
+  "products": [
+   {
+    "business_id": "mabels-bakery-college",
+    "name": "Artisan breads",
+    "category": "Bakery",
+    "price": "",
+    "source": "devandchains.com opening article"
+   },
+   {
+    "business_id": "mabels-bakery-college",
+    "name": "Artisan cheeses",
+    "category": "Deli",
+    "price": "",
+    "source": "devandchains.com opening article"
+   },
+   {
+    "business_id": "mabels-bakery-college",
+    "name": "Ready meals",
+    "category": "Prepared food",
+    "price": "",
+    "source": "devandchains.com opening article"
+   }
+  ],
+  "reviews": []
+ },
+ {
+  "id": "grace-meat-market",
+  "name": "Grace Meat Market",
+  "category": "Butcher",
+  "address": "644 College St, Toronto, ON M6G 1B8",
+  "lat": 43.6551428,
+  "lng": -79.4159121,
+  "hours": "Mon-Wed 8:00 AM-6:00 PM; Thu-Fri 8:00 AM-7:00 PM; Sat 8:00 AM-6:00 PM; Sun 9:00 AM-5:00 PM",
+  "phone": "(416) 534-7776",
+  "website": "https://shopgrace.ca/",
+  "description": "Butcher shop; products cut to order and packed fresh; local delivery.",
+  "image_url": "",
+  "nisa_rating": null,
+  "foodto_score": null,
+  "community_rating": null,
+  "community_review_count": null,
+  "community_rating_source": "",
+  "price_point": "",
+  "source": "Google Maps link; shopgrace.ca/pages/contact-us",
+  "products": [
+   {
+    "business_id": "grace-meat-market",
+    "name": "Beef Stew (1 lb)",
+    "category": "Meat",
+    "price": "$11.99",
+    "source": "shopgrace.ca/pages/delivery"
+   }
+  ],
+  "reviews": []
+ },
+ {
+  "id": "bloor-fruit-market",
+  "name": "Bloor Fruit Market",
+  "category": "Produce Market",
+  "address": "662 Bloor St W, Toronto, ON M6G 1K9",
+  "lat": 43.664273,
+  "lng": -79.4159463,
+  "hours": "Daily 9:00 AM-8:00 PM",
+  "phone": "(416) 588-1898",
+  "website": "https://bloorfruitmarket.ca/",
+  "description": "Fruit and produce market on Bloor West.",
+  "image_url": "",
+  "nisa_rating": null,
+  "foodto_score": null,
+  "community_rating": null,
+  "community_review_count": null,
+  "community_rating_source": "",
+  "price_point": "",
+  "source": "Google Maps link; find-open.ca / firmania.ca listings",
+  "products": [],
+  "reviews": []
+ },
+ {
+  "id": "village-market",
+  "name": "Village Market",
+  "category": "Grocery Store",
+  "address": "580 Bloor St W, Toronto, ON M6G 1K1",
+  "lat": 43.6650195,
+  "lng": -79.4123217,
+  "hours": "Hours unconfirmed (listings conflict)",
+  "phone": "(416) 516-6125",
+  "website": "",
+  "description": "Grocery store at Bloor & Bathurst.",
+  "image_url": "",
+  "nisa_rating": null,
+  "foodto_score": null,
+  "community_rating": null,
+  "community_review_count": null,
+  "community_rating_source": "",
+  "price_point": "",
+  "source": "Google Maps link; Waze / firmania.ca listings",
+  "products": [],
+  "reviews": []
+ }
+]
