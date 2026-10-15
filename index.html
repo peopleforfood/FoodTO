@@ -2,7 +2,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="theme-color" content="#1b7f3b"><meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="FoodTO"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icon.svg"><link rel="apple-touch-icon" href="icon.svg">
+<meta name="apple-mobile-web-app-title" content="FoodTO"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icon-192.png"><link rel="apple-touch-icon" href="apple-touch-icon.png">
 <title>FoodTO</title>
 <link rel="preconnect" href="https://tiles.openfreemap.org"><link rel="stylesheet" href="maplibre-gl.css">
 <style>
@@ -16,7 +16,8 @@ button{font:inherit;color:inherit;touch-action:manipulation;cursor:pointer}
 #chips{display:flex;gap:8px;overflow-x:auto;padding:10px 12px;scrollbar-width:none}#chips::-webkit-scrollbar{display:none}
 .chip{flex:none;height:38px;padding:0 14px;border-radius:19px;border:0;background:#fff;box-shadow:0 1px 4px #0003;font-size:14px;font-weight:500;display:flex;align-items:center;gap:6px;white-space:nowrap}
 .chip.on{background:var(--g);color:#fff}
-.fto{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:6px;background:var(--g);color:#fff;font-size:10px;font-weight:800;letter-spacing:-.5px}.chip.on .fto{background:#fff;color:var(--g)}
+.fto{width:22px;height:22px;border-radius:6px;background:url(foodto-badge.webp) center/cover;flex:none;display:inline-block}.chip.on .fto{box-shadow:0 0 0 2px #fff}
+.av{width:36px;height:36px;border-radius:18px;flex:none;color:#fff;font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center}.rv{display:flex;gap:10px;padding:12px 0;border-bottom:1px solid #f2f2f2}.rv p{margin:4px 0 0;font-size:14px;line-height:1.35}.rv small{color:#888}.st{color:#f5a623;letter-spacing:1px}.prod{cursor:pointer}.note{background:#fff7e0;border-radius:10px;padding:10px 12px;font-size:13px;color:#7a5b00;margin-bottom:10px}
 #results{margin:0 12px;background:#fff;border-radius:16px;box-shadow:0 2px 8px #0003;display:none;max-height:50vh;overflow:auto}
 #results div{padding:14px 16px;border-bottom:1px solid #eee}#results small{color:#666}
 .fab{position:fixed;right:14px;bottom:calc(var(--nav) + 18px);z-index:4;width:52px;height:52px;border-radius:26px;border:0;background:#fff;box-shadow:0 2px 8px #0004;font-size:22px}
@@ -38,13 +39,14 @@ h2{margin:2px 0;font-size:21px}.cat{color:#666;font-size:14px}
 .opts{padding:4px 20px 20px}.opts h3{margin:4px 0 12px}.opts button{display:block;width:100%;text-align:left;padding:15px;border:0;border-radius:12px;background:#f5f5f5;margin-bottom:8px;font-size:16px}.opts button.on{background:var(--gl);color:var(--g);font-weight:600}
 #toast{position:fixed;top:45%;left:50%;transform:translateX(-50%);background:#000c;color:#fff;padding:12px 18px;border-radius:12px;z-index:20;display:none;text-align:center;max-width:80vw}
 #count{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(var(--nav) + 24px);z-index:4;background:#fff;border-radius:16px;padding:7px 14px;font-size:13px;box-shadow:0 1px 4px #0003}
-</style></head><body>
+#prod.sheet{z-index:9}.pimg{width:44px;height:44px;border-radius:8px;flex:none;object-fit:cover;background:#f2f2f2}.ph{display:flex;align-items:center;justify-content:center;color:#1b7f3b;font-weight:700;background:#e8f3eb}.prod{gap:10px;align-items:center}.pt{flex:1;min-width:0;font-size:14px}.pt small{font-size:12px}.cg{font-weight:700;font-size:13px;text-transform:uppercase;color:#555;padding:14px 0 4px;letter-spacing:.3px}.cg small{color:#999;font-weight:400}.cq{width:100%;height:44px;border:1px solid #ddd;border-radius:12px;padding:0 14px;font-size:16px;margin-bottom:4px}</style></head><body>
 <div id="map"></div>
 <div id="top"><div id="search">🔍<input id="q" placeholder="Search FoodTO businesses" autocomplete="off" enterkeyhint="search"></div><div id="results"></div>
-<div id="chips"><button class="chip" data-f="score"><span class="fto">TO</span>FoodTO score</button><button class="chip" data-f="price">Price</button><button class="chip" data-f="dist">Distance</button><button class="chip" id="clear" style="display:none">✕ Clear</button></div></div>
+<div id="chips"><button class="chip" data-f="score"><span class="fto"></span>FoodTO score</button><button class="chip" data-f="price">Price</button><button class="chip" data-f="dist">Distance</button><button class="chip" id="clear" style="display:none">✕ Clear</button></div></div>
 <div id="count"></div>
 <button class="fab" id="locate" aria-label="Locate me">◎</button>
 <div class="sheet" id="card"><div class="grab"><i></i></div><div class="sb" id="cb"></div></div>
+<div class="sheet" id="prod"><div class="grab"><i></i></div><div class="sb" id="pb"></div></div>
 <div class="sheet" id="filt"><div class="grab"><i></i></div><div class="opts" id="fb"></div></div>
 <nav id="nav"><button class="on"><b>🗺️</b>Map</button><button data-s><b>📷</b>Scan</button><button data-s><b>✨</b>Discover</button><button data-s><b>💬</b>Chat</button></nav>
 <div id="toast"></div>
@@ -53,10 +55,10 @@ h2{margin:2px 0;font-size:21px}.cat{color:#666;font-size:14px}
 const $=s=>document.querySelector(s),esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 let biz=[],sel=null,me=null,meMk=null;const F={score:null,price:null,dist:null},pins={};
 const map=new maplibregl.Map({container:'map',style:'https://tiles.openfreemap.org/styles/liberty',center:[-79.4145,43.6625],zoom:14.2,attributionControl:{compact:true},dragRotate:false,pitchWithRotate:false,fadeDuration:0});
-map.touchZoomRotate.disableRotation();
+map.touchZoomRotate.disableRotation();map.on('styleimagemissing',e=>{if(!map.hasImage(e.id))map.addImage(e.id,{width:1,height:1,data:new Uint8Array(4)})});
 function toast(t,ms=1400){const x=$('#toast');x.textContent=t;x.style.display='block';clearTimeout(toast.t);toast.t=setTimeout(()=>x.style.display='none',ms)}
 // sheets: tap handle or swipe down to close
-function openS(el){document.querySelectorAll('.sheet.open').forEach(s=>s!==el&&closeS(s));el.style.transform='';el.classList.add('open')}
+function openS(el){document.querySelectorAll('.sheet.open').forEach(s=>s!==el&&!(el.id=='prod'&&s.id=='card')&&closeS(s));el.style.transform='';el.classList.add('open')}
 function closeS(el){el.style.transform='';el.classList.remove('open');if(el.id=='card'&&sel){pins[sel.id].classList.remove('sel');sel=null}}
 document.querySelectorAll('.sheet').forEach(s=>{const g=s.querySelector('.grab'),b=s.querySelector('.sb,.opts');let y0=null,dy=0;
  const start=e=>{y0=e.touches[0].clientY;dy=0;s.style.transition='none'};
@@ -70,31 +72,39 @@ const km=(a,b)=>{const R=6371,r=x=>x*Math.PI/180,dl=r(b[1]-a[1]),dg=r(b[0]-a[0])
 const na='<span class="bdg na">';
 function card(b,tab='overview'){
  const d=me?` · ${km(me,[b.lng,b.lat]).toFixed(1)} km`:'';
- const cr=b.community_rating!=null?`<span class="bdg">⭐ ${b.community_rating} <small>(${b.community_review_count} ${esc(b.community_rating_source)})</small></span>`:na+'⭐ Community: none yet</span>';
- const nr=b.nisa_rating!=null?`<span class="bdg">🌱 Nisa ${b.nisa_rating}</span>`:na+'🌱 Nisa rating: pending</span>';
- const sc=b.foodto_score!=null?`<span class="bdg"><span class="fto">TO</span> ${b.foodto_score}/100</span>`:na+'<span class="fto" style="opacity:.4">TO</span> Score pending</span>';
+ const cr=b.community_review_count?`<span class="bdg"><span class="st">★</span> ${b.community_rating.toFixed(1)} <small>(${b.community_review_count} FoodTO review${b.community_review_count>1?'s':''})</small></span>`:na+'★ No reviews yet</span>';
+ const sc=b.foodto_score!=null?`<span class="bdg"><span class="fto"></span><b>${b.foodto_score}</b>/100 FoodTO</span>`:na+'<span class="fto" style="opacity:.4"></span> Score pending</span>';
  const pp=b.price_point?`<span class="bdg">${esc(b.price_point)}</span>`:na+'$ Price: n/a</span>';
  let body='';
  if(tab=='overview')body=`${b.description?`<p style="margin:4px 0 8px;font-size:15px">${esc(b.description)}</p>`:''}
   <div class="row"><b>📍</b><span>${esc(b.address)}</span></div><div class="row"><b>🕒</b><span>${esc(b.hours).replace(/; /g,'<br>')}</span></div>
   <div class="row"><b>📞</b><span>${esc(b.phone)}</span></div>${b.website?`<div class="row"><b>🌐</b><a href="${esc(b.website)}" target="_blank" rel="noopener">${esc(b.website.replace(/^https?:\/\/(www\.)?/,'').replace(/\/$/,''))}</a></div>`:''}`;
- else if(tab=='reviews')body=b.reviews.length?b.reviews.map(r=>`<div class="prod"><div><b>${esc(r.user_name)}</b> ${'★'.repeat(r.stars|0)}<br><small>${esc(r.comment)}</small></div></div>`).join(''):'<div class="empty">No FoodTO reviews yet. Be the first (coming soon).</div>';
- else body=b.products.length?b.products.map(p=>`<div class="prod"><div>${esc(p.name)}<br><small>${esc(p.category)}</small></div><span>${esc(p.price)}</span></div>`).join(''):'<div class="empty">Catalogue not added yet.</div>';
- $('#cb').innerHTML=`<h2>${esc(b.name)}</h2><div class="cat">${esc(b.category)}${d}</div><div class="badges">${sc}${nr}${cr}${pp}</div>
+ else if(tab=='reviews')body=b.reviews.length?b.reviews.map(r=>`<div class="rv"><div class="av" style="background:${col(r.user.name)}">${esc(r.user.avatar_initials)}</div><div><b>${esc(r.user.name)}</b> <small>${esc(r.user.handle||'')}</small><br><span class="st">${'★'.repeat(r.stars)}${'☆'.repeat(5-r.stars)}</span> <small>${fmtD(r.date)}${r.user.neighbourhood?' · '+esc(r.user.neighbourhood):''}</small><p>${esc(r.text)}</p></div></div>`).join(''):'<div class="empty">No FoodTO reviews yet.</div>';
+ else body=catHTML(b);
+ $('#cb').innerHTML=`<h2>${esc(b.name)}</h2><div class="cat">${esc(b.category)}${d}</div><div class="badges">${sc}${cr}${pp}</div>
  <div class="acts"><a href="https://www.google.com/maps/dir/?api=1&destination=${b.lat},${b.lng}" target="_blank">Directions</a><a class="sec ${b.phone?'':'off'}" href="tel:${b.phone.replace(/[^\d+]/g,'')}">Call</a></div>
  <div class="tabs">${['overview','reviews','catalogue'].map(t=>`<button data-t="${t}" class="${t==tab?'on':''}">${t[0].toUpperCase()+t.slice(1)}${t=='reviews'?` (${b.reviews.length})`:''}</button>`).join('')}</div>${body}`;
 }
-$('#cb').addEventListener('click',e=>{const t=e.target.closest('[data-t]');if(t&&sel)card(sel,t.dataset.t)});
+function pRow(p,i){const [t,tag]=p.name.split(' - ');return `<div class="prod" data-p="${i}">${p.image_url?`<img class="pimg" loading="lazy" decoding="async" src="${esc(p.image_url)}" alt="">`:`<div class="pimg ph">${esc((p.brand||p.name)[0])}</div>`}<div class="pt"><div>${esc(t)}</div><small>${esc([p.brand,p.size].filter(Boolean).join(' · '))}${tag?'<br>'+esc(tag):''}</small></div><span>${esc(p.price)} ›</span></div>`}
+function catHTML(b,q='',inp=true){if(!b.products.length)return '<div class="empty">Catalogue not added yet.</div>';const t=q.trim().toLowerCase();const G={};b.products.forEach((p,i)=>{if(t&&!(p.name+' '+p.brand+' '+p.category+' '+p.subcategory).toLowerCase().includes(t))return;(G[p.category||'Other']??=[]).push(pRow(p,i))});
+ const n=Object.values(G).reduce((a,g)=>a+g.length,0);return (b.products.length>8&&inp?`<input id="cq" class="cq" placeholder="Search ${b.products.length} products" autocomplete="off">`:'')+`<div id="cl">${Object.keys(G).sort().map(k=>`<div class="cg">${esc(k)} <small>${G[k].length}</small></div>${G[k].join('')}`).join('')||'<div class="empty">No matching products</div>'}</div>`}
+$('#cb').addEventListener('input',e=>{if(e.target.id=='cq'&&sel){const h=catHTML(sel,e.target.value,false);$('#cl').outerHTML=h.slice(h.indexOf('<div id="cl">'))}});
+const col=n=>`hsl(${[...n].reduce((a,c)=>a+c.charCodeAt(0),0)*47%360} 55% 42%)`,fmtD=d=>new Date(d+'T12:00').toLocaleDateString('en-CA',{month:'short',day:'numeric',year:'numeric'});
+$('#cb').addEventListener('click',e=>{const t=e.target.closest('[data-t]');if(t&&sel)return card(sel,t.dataset.t);const p=e.target.closest('[data-p]');if(p&&sel)scorecard(sel,sel.products[p.dataset.p])});
+function scorecard(b,p){const [t,tag]=p.name.split(' - ');const R=(k,v)=>v?`<div class="row"><b>${k}</b><span>${v}</span></div>`:'';
+ $('#pb').innerHTML=`${p.image_url?`<img loading="lazy" src="${esc(p.image_url)}" style="width:100%;max-height:180px;object-fit:contain">`:''}<h2>${esc(t)}</h2><div class="cat">${esc(p.brand||'')}${p.size?' · '+esc(p.size):''} · at ${esc(b.name)}</div>${tag?`<p style="font-size:14px;color:#1b7f3b;margin:8px 0">${esc(tag)}</p>`:''}
+ ${R('💲',esc(p.price))}${R('🏷️',esc([p.category,p.subcategory].filter(Boolean).join(' › ')))}${R('ℹ️',esc(p.details))}${R('#',esc(p.sku))}${p.product_url?R('🛒',`<a href="${esc(p.product_url)}" target="_blank" rel="noopener">View product</a>`):''}${p.brand_website?R('🌐',`<a href="${esc(p.brand_website)}" target="_blank" rel="noopener">${esc(p.brand||'Brand')} website</a>`):''}
+ <div class="note" style="margin-top:12px">Full product scorecard: still being defined in the spec.</div>`;$('#pb').scrollTop=0;openS($('#prod'))}
 function open(b){if(sel)pins[sel.id].classList.remove('sel');sel=b;pins[b.id].classList.add('sel');card(b);$('#cb').scrollTop=0;openS($('#card'));map.easeTo({center:[b.lng,b.lat],offset:[0,-140],duration:250})}
 // filters
-const FO={score:{t:'Minimum FoodTO score',o:[[null,'Any'],[90,'90+'],[80,'80+'],[70,'70+'],[60,'60+']]},price:{t:'Price point',o:[[null,'Any'],['$','$'],['$$','$$'],['$$$','$$$'],['$$$$','$$$$']]},dist:{t:'Distance from you',o:[[null,'Any'],[0.5,'Within 500 m'],[1,'Within 1 km'],[2,'Within 2 km'],[5,'Within 5 km']]}};
+const FO={score:{t:'Minimum FoodTO score',o:[[null,'Any'],[80,'80+'],[60,'60+'],[40,'40+'],[20,'20+']]},price:{t:'Price point',o:[[null,'Any'],['$','$'],['$$','$$'],['$$$','$$$'],['$$$$','$$$$']]},dist:{t:'Distance from you',o:[[null,'Any'],[0.5,'Within 500 m'],[1,'Within 1 km'],[2,'Within 2 km'],[5,'Within 5 km']]}};
 const pass=b=>(F.score==null||(b.foodto_score!=null&&b.foodto_score>=F.score))&&(F.price==null||b.price_point==F.price)&&(F.dist==null||(me&&km(me,[b.lng,b.lat])<=F.dist));
 function apply(){let n=0;biz.forEach(b=>{const ok=pass(b);pins[b.id].style.display=ok?'':'none';n+=ok});
  document.querySelectorAll('[data-f]').forEach(c=>{const v=F[c.dataset.f];c.classList.toggle('on',v!=null);c.lastChild.textContent=v==null?{score:'FoodTO score',price:'Price',dist:'Distance'}[c.dataset.f]:FO[c.dataset.f].o.find(o=>o[0]===v)[1]});
  const any=Object.values(F).some(v=>v!=null);$('#clear').style.display=any?'':'none';$('#count').textContent=any?`${n} of ${biz.length} businesses`:`${biz.length} independent businesses`;
- if(any&&!n)toast(F.score!=null||F.price!=null?'No matches: scores/prices not added to the data yet':'No businesses in range',2200)}
+ if(any&&!n)toast(F.score!=null||F.price!=null?F.price!=null&&!biz.some(b=>b.price_point)?'No price data yet':'No matches':'No businesses in range',2200)}
 document.querySelectorAll('[data-f]').forEach(c=>c.onclick=()=>{const k=c.dataset.f,f=FO[k];
- $('#fb').innerHTML=`<h3>${f.t}</h3>`+f.o.map((o,i)=>`<button data-i="${i}" class="${F[k]===o[0]?'on':''}">${o[1]}</button>`).join('');
+ $('#fb').innerHTML=`<h3>${f.t}</h3>`+(k=='price'&&!biz.some(b=>b.price_point)?'<div class="note">No price points in the data yet, so this filter will show nothing.</div>':'')+f.o.map((o,i)=>`<button data-i="${i}" class="${F[k]===o[0]?'on':''}">${o[1]}</button>`).join('');
  $('#fb').onclick=e=>{const b=e.target.closest('[data-i]');if(!b)return;const v=f.o[b.dataset.i][0];
   const done=()=>{F[k]=v;apply();closeS($('#filt'))};
   if(k=='dist'&&v!=null&&!me)locate(done);else done()};
